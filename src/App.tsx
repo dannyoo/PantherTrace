@@ -3,12 +3,17 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { db } from './firebase';
 
+import Container from '@material-ui/core/Container';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 function App() {
 
   const [user, updateUser] = useState<string>();
-  const [isSick, updateIsSick] = useState<boolean>();
+  const [isSick, updateIsSick] = useState<any>();
   const [history, updateHistory] = useState<string[]>([]);
-  const [count, updateCount] = useState<number>();
+  const [count, updateCount] = useState<any>();
 
   useEffect(() => {
 
@@ -33,7 +38,10 @@ function App() {
               updateHistory(querySnapshot?.data()?.history);
               unsubscribe(); //may cause error
               listen(id, querySnapshot?.data()?.history);
+            } else {
+              updateCount(0);
             }
+
           });
       }
     }
@@ -76,7 +84,7 @@ function App() {
     db.collection("Users").doc(user).update({
       sick: sick
     }).then(function () {
-      console.log("Document successfully updated!");
+      console.log("Document successfully updated! Sick =", sick);
       updateIsSick(sick);
     })
       .catch(function (error) {
@@ -84,10 +92,10 @@ function App() {
         console.error("Error updating document: ", error);
       });
   }
-
+// eslint-disable-next-line
   function onScan(place: string) {
-    let spaceTimeId:string = `${new Date().getUTCMonth()}-${new Date().getUTCDate()}-${new Date().getUTCFullYear()}-${place}`;
-    let set: any = new Set([...history,spaceTimeId]);
+    let spaceTimeId: string = `${new Date().getUTCMonth()}-${new Date().getUTCDate()}-${new Date().getUTCFullYear()}-${place}`;
+    let set: any = new Set([...history, spaceTimeId]);
     db.collection("Users").doc(user).update({
       history: Array.from(set)
     }).then(function () {
@@ -102,19 +110,27 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {history && typeof count !== 'undefined' &&
+        <Container maxWidth="sm">
+          <Tooltip title="Open Qr Code Scanner">
+            <IconButton>
+              <Icon style={{ fontSize: 50, color: "#3F51B5" }}>qr_code_scanner</Icon>
+            </IconButton>
+          </Tooltip>
+          {!isSick && <>
+            <h3>{count === 0 ? "No Contact Detected" : `You've been nearby someone who tested positive.`}</h3>
+            <p>{count === 0 ? "Based on your data, you have not been nerarby someone who tested positive for COVID-19." : `Based on your data, we found ${count} possible encounters.`}</p>
+          </>}
+          {isSick && <>
+            <h3>You have been reported as COVID positive.</h3>
+            <p>People who have been nearby you are notified.</p>
+          </>}
+          <Tooltip title="Open New Tab" placement="top">
+            <Button variant="contained" color="primary" href="https://landing.google.com/screener/covid19" target="_blank">Take Self Assesment</Button>
+          </Tooltip>
+          <Button variant="contained" onClick={() => onToggleSick(!isSick)}>{isSick ? "I don't have COVID" : "I tested COVID positive"}</Button>
+        </Container>
+      }
     </div>
   );
 }
