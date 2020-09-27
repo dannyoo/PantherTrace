@@ -1,4 +1,29 @@
-img {
+/* just to center the graphic */
+body,
+html {
+  height: 100%;
+}
+.bg > img {
+  position: relative;
+  height: inherit;
+  width: 100%;
+}
+.bg > button {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%) 
+}
+#root {
+  height: 100% !important;
+}
+.App {
+  height: 100% !important;
+}
+
+/* qr code */
+input + img {
   display: none !important;
 }
 

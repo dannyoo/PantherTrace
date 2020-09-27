@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import Box from '@material-ui/core/Box';
 
 function App() {
 
@@ -119,32 +120,40 @@ function App() {
   return (
     <div className="App">
       {history && typeof count !== 'undefined' &&
-        <Container maxWidth="sm">
-          <Tooltip title="Open Qr Code Scanner">
-            <IconButton onClick={() => { qr1.current.openImageDialog(); }}>
-              <Icon style={{ fontSize: 100, color: "#3F51B5" }}>qr_code_scanner</Icon>
-            </IconButton>
-          </Tooltip>
-          <QrReader
-            ref={qr1}
-            legacyMode
-            onError={(e: any) => { console.error(e) }}
-            onScan={(data: any) => {
-              onScan(data);
-            }}
-          />
-          {!isSick && <>
-            <h3>{count === 0 ? "No Contact Detected" : `You've been nearby someone who tested positive.`}</h3>
-            <p>{count === 0 ? "Based on your data, you have not been nerarby someone who tested positive for COVID-19." : `Based on your data, we found ${count} possible encounters.`}</p>
-          </>}
-          {isSick && <>
-            <h3>You have been reported as COVID positive.</h3>
-            <p>People who have been nearby you are notified.</p>
-          </>}
-          <Tooltip title="Open New Tab" placement="top">
-            <Button variant="contained" color="primary" href="https://landing.google.com/screener/covid19" target="_blank">Take Self Assesment</Button>
-          </Tooltip>
-          <Button variant="contained" onClick={() => onToggleSick(!isSick)}>{isSick ? "I don't have COVID" : "I tested COVID positive"}</Button>
+        <Container maxWidth="sm" style={{ height: "100%" }} >
+          <Box display="flex" p={1} flexDirection="column" justifyContent="space-around" alignItems="center" css={{ height: "100%" }}>
+            <div className="bg">
+              <img src="/bg.svg" alt="Illustration"/>
+              <Tooltip title="Open Qr Code Scanner" >
+                <IconButton onClick={() => { qr1.current.openImageDialog(); }}>
+                  <Icon style={{ fontSize: 200, color: "#3F51B5" }}>qr_code_scanner</Icon>
+                </IconButton>
+              </Tooltip>
+            </div>
+            <QrReader
+              ref={qr1}
+              legacyMode
+              onError={(e: any) => { console.error(e) }}
+              onScan={(data: any) => {
+                onScan(data);
+              }}
+            />
+            <div>
+              {!isSick && <>
+                <h3>{count === 0 ? "No Contact Detected" : `You've been nearby someone who tested positive.`}</h3>
+                <p>{count === 0 ? "Based on your data, you have not been nerarby someone who tested positive for COVID-19." : `Based on your data, we found ${count} possible encounters.`}</p>
+              </>}
+              {isSick && <>
+                <h3>You have been reported as COVID positive.</h3>
+                <p>People who have been nearby you are notified.</p>
+              </>}
+
+              <Tooltip title="Open New Tab">
+                <Button variant="contained" style={{ margin: 14 }} color="primary" href="https://landing.google.com/screener/covid19" target="_blank">Take Self Assesment</Button>
+              </Tooltip>
+              <Button variant="contained" onClick={() => onToggleSick(!isSick)}>{isSick ? "I don't have COVID" : "I tested COVID positive"}</Button>
+            </div>
+          </Box>
         </Container>
       }
     </div>
