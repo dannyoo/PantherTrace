@@ -1,19 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import './App.css';
 import { db } from './firebase';
+import QrReader from 'react-qr-scanner';
 
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+
 function App() {
 
   const [user, updateUser] = useState<string>();
   const [isSick, updateIsSick] = useState<any>();
   const [history, updateHistory] = useState<string[]>([]);
-  const [count, updateCount] = useState<any>();
+  const [count, updateCount] = useState<any>(false);
+
+  const qr1 = useRef<any>(null);
 
   useEffect(() => {
 
@@ -92,20 +96,24 @@ function App() {
         console.error("Error updating document: ", error);
       });
   }
-// eslint-disable-next-line
+
   function onScan(place: string) {
-    let spaceTimeId: string = `${new Date().getUTCMonth()}-${new Date().getUTCDate()}-${new Date().getUTCFullYear()}-${place}`;
-    let set: any = new Set([...history, spaceTimeId]);
-    db.collection("Users").doc(user).update({
-      history: Array.from(set)
-    }).then(function () {
-      console.log("Document successfully updated!");
-      updateHistory(Array.from(set));
-    })
-      .catch(function (error) {
-        // The document probably doesn't exist.
-        console.error("Error updating document: ", error);
-      });
+    if (place === null) alert("We couldn't find a QR Code.")
+    else {
+      let spaceTimeId: string = `${new Date().getUTCMonth()}-${new Date().getUTCDate()}-${new Date().getUTCFullYear()}-${place}`;
+      let set: any = new Set([...history, spaceTimeId]);
+      db.collection("Users").doc(user).update({
+        history: Array.from(set)
+      }).then(function () {
+        console.log("Document successfully updated!");
+        updateHistory(Array.from(set));
+        alert("Successfully Traced Location");
+      })
+        .catch(function (error) {
+          // The document probably doesn't exist.
+          console.error("Error updating document: ", error);
+        });
+    }
   }
 
   return (
@@ -113,10 +121,18 @@ function App() {
       {history && typeof count !== 'undefined' &&
         <Container maxWidth="sm">
           <Tooltip title="Open Qr Code Scanner">
-            <IconButton>
-              <Icon style={{ fontSize: 50, color: "#3F51B5" }}>qr_code_scanner</Icon>
+            <IconButton onClick={() => { qr1.current.openImageDialog(); }}>
+              <Icon style={{ fontSize: 100, color: "#3F51B5" }}>qr_code_scanner</Icon>
             </IconButton>
           </Tooltip>
+          <QrReader
+            ref={qr1}
+            legacyMode
+            onError={(e: any) => { console.error(e) }}
+            onScan={(data: any) => {
+              onScan(data);
+            }}
+          />
           {!isSick && <>
             <h3>{count === 0 ? "No Contact Detected" : `You've been nearby someone who tested positive.`}</h3>
             <p>{count === 0 ? "Based on your data, you have not been nerarby someone who tested positive for COVID-19." : `Based on your data, we found ${count} possible encounters.`}</p>
