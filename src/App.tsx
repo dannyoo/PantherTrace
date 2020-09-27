@@ -53,6 +53,9 @@ function App() {
 
     let url: string[] = window.location.pathname.split("/");
     let id: string = url[1];
+    if(id === ""){
+      window.location.href = `anonymous${Math.floor(Math.random()*100)}` 
+    } 
     updateUser(id);
 
     let me = db.collection("Users").doc(id);
