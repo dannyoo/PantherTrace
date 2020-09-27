@@ -53,9 +53,9 @@ function App() {
 
     let url: string[] = window.location.pathname.split("/");
     let id: string = url[1];
-    if(id === ""){
-      window.location.href = `anonymous${Math.floor(Math.random()*100)}` 
-    } 
+    if (id === "") {
+      window.location.href = `anonymous${Math.floor(Math.random() * 500)}`
+    }
     updateUser(id);
 
     let me = db.collection("Users").doc(id);
@@ -126,7 +126,7 @@ function App() {
         <Container maxWidth="sm" style={{ height: "100%" }} >
           <Box display="flex" p={1} flexDirection="column" justifyContent="space-around" alignItems="center" css={{ height: "100%" }}>
             <div className="bg">
-              <img src="/bg.svg" alt="Illustration"/>
+              <img src="/bg.svg" alt="Illustration" />
               <Tooltip title="Open Qr Code Scanner" >
                 <IconButton onClick={() => { qr1.current.openImageDialog(); }}>
                   <Icon style={{ fontSize: 200, color: "#3F51B5" }}>qr_code_scanner</Icon>
@@ -144,7 +144,7 @@ function App() {
             <div>
               {!isSick && <>
                 <h3>{count === 0 ? "No Contact Detected" : `You've been nearby someone who tested positive.`}</h3>
-                <p>{count === 0 ? "Based on your data, you have not been nerarby someone who tested positive for COVID-19." : `Based on your data, we found ${count} possible encounters.`}</p>
+                <p>{count === 0 ? "Based on your data, you have not been nerarby someone who tested positive for COVID-19." : `Based on your data, we found ${count} possible encounter${count > 1 ? "s" : ""}.`}</p>
               </>}
               {isSick && <>
                 <h3>You have been reported as COVID positive.</h3>

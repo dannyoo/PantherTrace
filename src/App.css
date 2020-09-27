@@ -8,6 +8,11 @@ html {
   height: inherit;
   width: 100%;
 }
+@media (prefers-reduced-motion: no-preference) {
+  .bg > img {
+    animation: App-logo-spin infinite 230s linear;
+  }
+}
 .bg > button {
   position: absolute;
   top: 30%;
