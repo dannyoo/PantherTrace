@@ -152,7 +152,7 @@ function App() {
               </>}
 
               <Tooltip title="Open New Tab">
-                <Button variant="contained" style={{ margin: 14 }} color="primary" href="https://landing.google.com/screener/covid19" target="_blank">Take Self Assesment</Button>
+                <Button variant="contained" style={{ margin: 14 }} color="primary" href="https://landing.google.com/screener/covid19" rel="noopener" target="_blank">Take Self Assesment</Button>
               </Tooltip>
               <Button variant="contained" onClick={() => onToggleSick(!isSick)}>{isSick ? "I don't have COVID" : "I tested COVID positive"}</Button>
             </div>
